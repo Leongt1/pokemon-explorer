@@ -1,14 +1,15 @@
 import { CiSearch } from "react-icons/ci";
 import { useAllPokemon, usePokemonInfinite } from "../hooks/usePokemon";
 import PokemonCard from "../components/PokemonCard";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "../components/Layout";
 import useDebounce from "../hooks/useDebouce";
 
 // const PAGE_SIZE = 20;
 
 const Dashboard = () => {
-  // const [offset, setOffset] = useState(0);
+  const restoredRef = useRef(false)
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [searchError, setSearchError] = useState("");
 
@@ -17,8 +18,28 @@ const Dashboard = () => {
   const debouncedSearch = useDebounce(searchQuery, 300);
 
   const pokemons = data?.pages.flatMap((page) => page.results)
-
   const isSearching = debouncedSearch.trim() !== ""
+
+  useEffect(() => {
+    if (!isLoading && data && !restoredRef.current) {
+      const saved = sessionStorage.getItem('dashboard-scroll')
+      if (saved) {
+        setTimeout(() => {
+          window.scrollTo({ top: Number(saved), behavior: 'instant' })
+          restoredRef.current = true
+        }, 100)
+      }
+    }
+  }, [isLoading, data])
+
+  // save scroll on leave
+  useEffect(() => {
+    const handleScroll = () => {
+      sessionStorage.setItem('dashboard-scroll', String(window.scrollY))
+    }
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const filteredPokemon = 
     allPokemons?.results.filter((pokemon) => 

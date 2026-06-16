@@ -1,5 +1,6 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { fetchAbility, fetchAllPokemon, fetchPokemon, fetchPokemonList } from "../api/pokemon";
+import { fetchAbility, fetchAllPokemon, fetchPokemon, fetchPokemonEvolutionChain, fetchPokemonList, fetchPokemonSpecies } from "../api/pokemon";
+import { getIdFromUrl } from "../utils/pokemon";
 
 export const usePokemonInfinite = () => {
     return useInfiniteQuery({
@@ -47,4 +48,34 @@ export const useAbility = (name: string) => {
         enabled: !!name,
         staleTime: 1000 * 60 * 5,
     })
+}
+
+const usePokemonSpecies = (name: string) => {
+    return useQuery({
+        queryKey: ['pokemon-species', name],
+        queryFn: () => fetchPokemonSpecies(name),
+        enabled: !!name,
+        staleTime: 1000 * 60 * 5,
+    })
+}
+
+const usePokemonEvolutionChain = (id: number) => {
+    return useQuery({
+        queryKey: ['evolution-chain', id],
+        queryFn: () => fetchPokemonEvolutionChain(id),
+        enabled: id > 0,
+        staleTime: 1000 * 60 * 5,
+    })
+}
+
+export const useEvolutionChain = (name: string) => {
+    const { data: species } = usePokemonSpecies(name)
+
+    const chainId = species?.evolution_chain.url
+        ? getIdFromUrl(species.evolution_chain.url)
+        : 0
+
+    const chainQuery = usePokemonEvolutionChain(chainId)
+
+    return chainQuery
 }

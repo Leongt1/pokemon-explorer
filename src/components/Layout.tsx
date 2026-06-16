@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, ScrollRestoration, useLocation } from "react-router-dom";
 import useTheme from "../hooks/useTheme";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
 

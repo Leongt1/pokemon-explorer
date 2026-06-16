@@ -5,6 +5,7 @@ import { FaHeart } from "react-icons/fa";
 import useFavoriteStore from "../store/favoritesStore";
 import Layout from "../components/Layout";
 import TypeBadge from "../components/TypeBadge";
+import EvolutionChain from "../components/EvolutionChain";
 
 const DetailPage = () => {
   const { name } = useParams<{ name: string }>();
@@ -39,6 +40,8 @@ const DetailPage = () => {
       add(pokemon);
     }
   };
+
+  
 
   return (
     <Layout>
@@ -110,7 +113,7 @@ const DetailPage = () => {
                 </li>
               ))}
             </ul>
-            <ul className="flex flex-col gap-2 items-start">
+            <div className="flex flex-col gap-2 items-start">
               <span className="text-xl capitalize text-zinc-700 dark:text-zinc-300">Stats:</span>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ml-5">
                 {pokemon.stats.map((s) => (
@@ -121,10 +124,11 @@ const DetailPage = () => {
                   />
                 ))}
               </div>
-            </ul>
+            </div> 
+            <EvolutionChain name={pokemon.name} />
           </div>
           <img
-            className="w-50 h-50 md:w-100 md:h-100"
+            className="w-50 h-50 md:w-100 md:h-100 -order-1 md:order-1"
             src={pokemon.sprites.other["official-artwork"].front_default}
             alt={pokemon.name}
           />

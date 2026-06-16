@@ -68,10 +68,33 @@ export type AbilityDetail = {
     id: number
     name: string
     effect_entries: {
-      effect: string
-      short_effect: string
-      language: {
+        effect: string
+        short_effect: string
+        language: {
         name: string
-      }
+        }
     }[]
-  }
+}
+
+export type PokemonSpecies = {
+    evolution_chain: {
+        url: string
+    }
+    evolves_from_species?: {
+        name: string
+        url: string
+    }
+}
+
+export type EvolutionNode = {
+    species: {
+        name: string
+        url: string
+    }
+    evolves_to: EvolutionNode[]
+}
+
+export type EvolutionChain = {
+    id: number
+    chain: EvolutionNode
+}
