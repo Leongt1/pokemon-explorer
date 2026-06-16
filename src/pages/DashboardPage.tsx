@@ -2,8 +2,6 @@ import { CiSearch } from "react-icons/ci";
 import { useAllPokemon, usePokemonList } from "../hooks/usePokemon";
 import PokemonCard from "../components/PokemonCard";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { searchSchema } from "../schemas/searchSchema";
 import Layout from "../components/Layout";
 import useDebounce from "../hooks/useDebouce";
 
@@ -14,10 +12,8 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchError, setSearchError] = useState("");
 
-  const navigate = useNavigate();
-
   const { data: pokemons, isLoading, isError } = usePokemonList(offset);
-  const { data: allPokemons } = useAllPokemon();
+  const { data: allPokemons, isLoading: isLoadingAll } = useAllPokemon();
   const debouncedSearch = useDebounce(searchQuery, 300);
 
   const isSearching = debouncedSearch.trim() !== ""
@@ -34,25 +30,10 @@ const Dashboard = () => {
       ? filteredPokemon.slice(0, 20)
       : pokemons?.results ?? [];
 
-  const handleSearch = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    const result = searchSchema.safeParse({
-      name: searchQuery.trim().toLowerCase(),
-    });
-
-    if (!result.success) {
-      setSearchError(result.error.issues[0].message);
-      return;
-    }
-
-    setSearchError("");
-    navigate(`/pokemon/${result.data.name}`);
-  };
-
   return (
     <Layout>
       <form
-        onSubmit={handleSearch}
+        onSubmit={(e) => e.preventDefault()}
         className="w-full max-w-xl flex flex-col items-center gap-1 mb-2"
       >
         <div className="border-2 flex flex-row items-center gap-4 rounded-full w-full px-4 bg-white">
@@ -83,13 +64,12 @@ const Dashboard = () => {
             Something went wrong
           </p>
         )}
-        {!isLoading &&
-          displayedPokemon.map((p) => (
+        {!isLoadingAll && displayedPokemon.map((p) => (
             <PokemonCard key={p.name} name={p.name} url={p.url} />
-          ))}
+        ))}
       </div>
 
-      {!isLoading && isSearching && (
+      {!isLoadingAll && isSearching && (
         <div className="mt-4 text-sm text-gray-600">
           Showing{" "}
           <span className="font-semibold">

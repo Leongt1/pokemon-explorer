@@ -12,7 +12,7 @@ const StatBar = ({ name, value }: StatBarProps) => {
     <li className="text-xl font-semibold capitalize grid grid-cols-2 gap-4">
         <p className="text-sm">{name.split('-').filter(Boolean).join(' ')} : </p> 
         <div className="flex items-center gap-4">
-            <div className={`w-[255px] h-2.5 border rounded overflow-hidden flex `}>
+            <div className={`w-full h-2.5 border rounded overflow-hidden flex `}>
                 <div 
                     className="h-full bg-black transition-all"
                     style={{ width: `${percentage}%` }}

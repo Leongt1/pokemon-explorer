@@ -8,7 +8,7 @@ const api = axios.create({
 export const fetchAllPokemon = async (): Promise<PokemonListResponse> => {
     const { data } = await api.get("/pokemon", {
         params: {
-            limit: 100000,
+            limit: 2000,
             offset: 0,
         },
     })

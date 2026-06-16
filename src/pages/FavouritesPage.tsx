@@ -9,7 +9,7 @@ const FavouritesPage = () => {
   return (
     <Layout>
       {favorites.length === 0 ? (
-        <div className="text-center py-10">
+        <div className="text-center py-10 max-w-md">
           <p className="text-gray-600 text-lg">No favourites yet.</p>
           <p className="text-gray-500 mt-2">
             Tap the heart on a Pokémon card or detail page to save it here.
@@ -23,9 +23,7 @@ const FavouritesPage = () => {
         </div>
       ) : (
         <>
-          <p className="text-gray-600 self-start">
-            {favorites.length} favourite{favorites.length !== 1 ? "s" : ""}
-          </p>
+          <p className="text-gray-600">{favorites.length} favourite{favorites.length !== 1 ? "s" : ""}</p>
           <div className="flex flex-wrap gap-3 justify-center w-full max-w-6xl">
             {favorites.map((p) => (
               <PokemonCard key={p.id} name={p.name} id={p.id} />

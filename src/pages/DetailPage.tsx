@@ -4,6 +4,7 @@ import StatBar from "../components/StatBar";
 import { FaHeart } from "react-icons/fa";
 import useFavoriteStore from "../store/favoritesStore";
 import Layout from "../components/Layout";
+import TypeBadge from "../components/TypeBadge";
 
 const DetailPage = () => {
   const { name } = useParams<{ name: string }>();
@@ -82,17 +83,12 @@ const DetailPage = () => {
               <span className="font-semibold">{pokemon.base_experience}</span>{" "}
               <span className="text-sm italic font-semibold">exp</span>
             </p>
-            <ul className="flex gap-2 items-center flex-wrap">
+            <div className="flex gap-2 items-center flex-wrap">
               <span className="text-xl capitalize">Types:</span>
-              {pokemon.types.map((t, i) => (
-                <li key={t.type.name} className="text-xl font-semibold capitalize">
-                  {t.type.name}
-                  {i !== pokemon.types.length - 1 && (
-                    <span className="font-light"> | </span>
-                  )}
-                </li>
+              {pokemon.types.map((t) => (
+                  <TypeBadge type={t.type.name} />  
               ))}
-            </ul>
+            </div>
             <ul className="flex gap-2 items-center flex-wrap">
               <span className="text-xl capitalize">Abilities:</span>
               {pokemon.abilities.map((a, i) => (
