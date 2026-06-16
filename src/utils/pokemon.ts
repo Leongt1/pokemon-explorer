@@ -1,4 +1,4 @@
-import type { EvolutionChain, EvolutionNode } from "../types/pokemon";
+import type { EvolutionNode } from "../types/pokemon";
 
 export const getIdFromUrl = (url: string): number => {
     const parts = url.split('/').filter(Boolean)
