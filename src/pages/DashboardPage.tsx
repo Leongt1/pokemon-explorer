@@ -1,20 +1,22 @@
 import { CiSearch } from "react-icons/ci";
-import { useAllPokemon, usePokemonList } from "../hooks/usePokemon";
+import { useAllPokemon, usePokemonInfinite } from "../hooks/usePokemon";
 import PokemonCard from "../components/PokemonCard";
 import { useState } from "react";
 import Layout from "../components/Layout";
 import useDebounce from "../hooks/useDebouce";
 
-const PAGE_SIZE = 20;
+// const PAGE_SIZE = 20;
 
 const Dashboard = () => {
-  const [offset, setOffset] = useState(0);
+  // const [offset, setOffset] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchError, setSearchError] = useState("");
 
-  const { data: pokemons, isLoading, isError } = usePokemonList(offset);
+  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = usePokemonInfinite();
   const { data: allPokemons, isLoading: isLoadingAll } = useAllPokemon();
   const debouncedSearch = useDebounce(searchQuery, 300);
+
+  const pokemons = data?.pages.flatMap((page) => page.results)
 
   const isSearching = debouncedSearch.trim() !== ""
 
@@ -27,8 +29,8 @@ const Dashboard = () => {
 
   const displayedPokemon = 
     isSearching
-      ? filteredPokemon.slice(0, 20)
-      : pokemons?.results ?? [];
+      ? filteredPokemon
+      : pokemons ?? [];
 
   return (
     <Layout>
@@ -64,7 +66,11 @@ const Dashboard = () => {
             Something went wrong
           </p>
         )}
-        {!isLoadingAll && displayedPokemon.map((p) => (
+        {!isLoading && !isSearching && displayedPokemon.map((p) => (
+          <PokemonCard key={p.name} name={p.name} url={p.url} />
+        ))}
+
+        {!isLoadingAll && isSearching && displayedPokemon.map((p) => (
           <PokemonCard key={p.name} name={p.name} url={p.url} />
         ))}
       </div>
@@ -83,23 +89,11 @@ const Dashboard = () => {
         <div className="flex items-center gap-4 mt-4">
           <button
             type="button"
-            disabled={offset === 0}
-            onClick={() => setOffset((prev) => Math.max(0, prev - PAGE_SIZE))}
-            className="px-4 py-2 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-zinc-700"
+            disabled={isFetchingNextPage || !hasNextPage}
+            onClick={() => fetchNextPage()}
+            className="px-4 py-2 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-zinc-700 cursor-pointer"
           >
-            Previous
-          </button>
-          <span className="text-sm text-zinc-600 dark:text-zinc-400">
-            Showing {offset + 1}–{Math.min(offset + PAGE_SIZE, pokemons.count)} of{" "}
-            {pokemons.count}
-          </span>
-          <button
-            type="button"
-            disabled={!pokemons?.next}
-            onClick={() => setOffset((prev) => prev + PAGE_SIZE)}
-            className="px-4 py-2 rounded-md border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-zinc-700"
-          >
-            Next
+            {isFetchingNextPage ? 'Loading...' : hasNextPage ? 'Load More' : 'All Pokémon loaded'}
           </button>
         </div>
       )}
